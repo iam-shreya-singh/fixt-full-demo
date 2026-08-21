@@ -4,8 +4,7 @@ import { and, asc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { availability, db } from '@/lib/db'
-
-const DEMO_OWNER_ID = 'clerk_demo_owner'
+import { getOwnerId } from '@/lib/auth/owner'
 const availabilitySchema = z.object({
   weekday: z.number().int().min(0).max(6),
   startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
@@ -21,18 +20,16 @@ export type OwnerAvailability = {
   enabled: boolean
 }
 
-function ownerId() {
-  return process.env.FIXT_OWNER_ID ?? DEMO_OWNER_ID
-}
+
 
 export async function getOwnerAvailability(): Promise<OwnerAvailability[]> {
   return db.select({ id: availability.id, weekday: availability.weekday, startTime: availability.startTime, endTime: availability.endTime, enabled: availability.enabled })
-    .from(availability).where(eq(availability.userId, ownerId())).orderBy(asc(availability.weekday))
+    .from(availability).where(eq(availability.userId, getOwnerId())).orderBy(asc(availability.weekday))
 }
 
 export async function updateOwnerAvailability(input: OwnerAvailability[]) {
   const parsed = z.array(availabilitySchema).length(7).parse(input)
-  const userId = ownerId()
+  const userId = getOwnerId()
   await db.transaction(async (tx) => {
     for (const row of parsed) {
       await tx.update(availability).set({ startTime: row.startTime, endTime: row.endTime, enabled: row.enabled })

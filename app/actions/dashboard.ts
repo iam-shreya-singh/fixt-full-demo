@@ -2,8 +2,7 @@
 
 import { and, asc, eq, gte, lt } from 'drizzle-orm'
 import { appointments, db } from '@/lib/db'
-
-const DEMO_OWNER_ID = 'clerk_demo_owner'
+import { getOwnerId } from '@/lib/auth/owner'
 
 export type DashboardAppointment = {
   id: string
@@ -17,7 +16,7 @@ export type DashboardAppointment = {
 
 export async function getOwnerDashboard(): Promise<DashboardAppointment[]> {
   // Clerk adapter boundary: replace this owner id with auth().userId when Clerk is connected.
-  const ownerId = process.env.FIXT_OWNER_ID ?? DEMO_OWNER_ID
+  const ownerId = getOwnerId()
   const start = new Date()
   start.setHours(0, 0, 0, 0)
   const end = new Date(start)
