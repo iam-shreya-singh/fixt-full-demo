@@ -8,8 +8,17 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const plex = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-plex' })
 
 export const metadata: Metadata = {
-  title: 'Fixt — Book your time',
-  description: 'Book an appointment with Morrow Studio.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://fixt.example.com'),
+  title: {
+    default: 'Fixt | Appointment Booking Software for Service Businesses',
+    template: '%s | Fixt',
+  },
+  description: 'Fixt gives service businesses a clear online booking system for services, client scheduling, availability, appointments, and cancellations.',
+  applicationName: 'Fixt',
+  authors: [{ name: 'Fixt' }],
+  creator: 'Fixt',
+  publisher: 'Fixt',
+  robots: { index: true, follow: true },
 }
 
 export const viewport: Viewport = {
