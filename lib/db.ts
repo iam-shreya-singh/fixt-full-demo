@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { Pool } from 'pg'
 
 export const services = pgTable('fixt_services', {
@@ -12,6 +12,35 @@ export const services = pgTable('fixt_services', {
   status: text('status').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+
+export const customers = pgTable('fixt_customers', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  notes: text('notes').notNull(),
+  lastBookingAt: timestamp('last_booking_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+
+export const ownerProfiles = pgTable('fixt_owner_profiles', {
+  userId: text('user_id').primaryKey(),
+  businessName: text('business_name').notNull(),
+  slug: text('slug').notNull(),
+  timezone: text('timezone').notNull(),
+  onboardingComplete: boolean('onboarding_complete').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+
+export const availability = pgTable('fixt_availability', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  weekday: integer('weekday').notNull(),
+  startTime: text('start_time').notNull(),
+  endTime: text('end_time').notNull(),
+  enabled: boolean('enabled').notNull(),
 })
 
 export const appointments = pgTable('fixt_appointments', {
