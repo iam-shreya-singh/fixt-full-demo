@@ -1,5 +1,9 @@
-import { SignUp } from '@clerk/nextjs'
+import { SignUp } from "@clerk/nextjs"
 
 export default function SignUpPage() {
-  return <SignUp />
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <SignUp routing="hash" />
+    </div>
+  )
 }
