@@ -1,14 +1,18 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/onboarding'])
+// Protects only the dashboard and onboarding flows
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/onboarding(.*)'])
 
 export default clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request)) await auth.protect()
 })
 
+// Canonical Next.js platform configuration matcher
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Bypasses Next.js internal processing and all static assets cleanly
+    '/((?!_next|[^?]*\\.[^?]*$).*)',
+    // Always monitors API and trpc interaction streams
     '/(api|trpc)(.*)',
   ],
 }
