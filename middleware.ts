@@ -7,11 +7,11 @@ export default clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request)) await auth.protect()
 })
 
-// Canonical Next.js platform configuration matcher
+// Updated Next.js configuration matcher to handle Clerk Auto-Proxy
 export const config = {
   matcher: [
-    // Bypasses Next.js internal processing and all static assets cleanly
-    '/((?!_next|[^?]*\\.[^?]*$).*)',
+    // Bypasses Next.js internals, static assets, and the Clerk proxy path
+    '/((?!_next|__clerk|[^?]*\\.[^?]*$).*)',
     // Always monitors API and trpc interaction streams
     '/(api|trpc)(.*)',
   ],
