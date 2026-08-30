@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
+import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata, Viewport } from 'next'
 import { Fraunces, IBM_Plex_Mono, Inter } from 'next/font/google'
 import './globals.css'
@@ -28,11 +29,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
+    <ClerkProvider afterSignOutUrl="/">
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${plex.variable}`}>
       <body className="antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
+    </ClerkProvider>
   )
 }

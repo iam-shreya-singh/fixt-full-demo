@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, MapPin, TriangleAlert } from 'lucide-react'
 import { business } from './booking-data'
 import { cancellationPolicy, isMatchingBooking, makeCancellationReference, sampleBooking } from './cancellation-data'
+import { cancelBooking, type PublicBooking } from '@/app/actions/cancellation'
 
 type Form = { reference: string; email: string }
 
@@ -64,6 +65,36 @@ function ReviewState({ isLoading, onBack, onCancel }: { isLoading: boolean; onBa
 
 function CancellationSuccess({ reference }: { reference: string }) {
   return <main className="min-h-screen bg-fixt-paper text-fixt-ink"><Header /><div className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24"><div className="mb-12 flex size-12 items-center justify-center bg-fixt-amber text-fixt-ink"><Check className="size-6" strokeWidth={1.5} /></div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fixt-amber">Appointment cancelled</p><h1 className="mt-4 max-w-xl text-balance font-serif text-5xl leading-[0.98] tracking-[-0.055em] md:text-7xl">You&apos;re all set.</h1><p className="mt-6 max-w-md text-sm leading-6 text-fixt-muted">A cancellation confirmation has been prepared for {sampleBooking.email}.</p><div className="mt-12 grid border-y border-fixt-line md:grid-cols-2"><div className="border-b border-fixt-line py-6 md:border-b-0 md:border-r md:pr-8"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-fixt-muted">Cancelled appointment</p><p className="mt-3 font-serif text-2xl">{sampleBooking.service.name}</p><p className="mt-1 font-mono text-xs text-fixt-muted">{sampleBooking.dateLabel} · {sampleBooking.time}</p></div><div className="py-6 md:pl-8"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-fixt-muted">Cancellation reference</p><p className="mt-3 font-mono text-2xl tracking-[0.08em]">{reference}</p></div></div><a href="/demo" className="mt-10 inline-flex items-center gap-2 bg-fixt-ink px-5 py-4 font-mono text-[11px] uppercase tracking-[0.14em] text-fixt-paper hover:opacity-85">Book another appointment <ArrowRight className="size-4" strokeWidth={1.5} /></a></div></main>
+}
+
+function formatDateLabel(iso: string) {
+  return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(iso))
+}
+function formatTimeLabel(iso: string) {
+  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso))
+}
+
+export function TokenCancellationPage({ token, booking }: { token: string; booking: PublicBooking }) {
+  const [step, setStep] = useState<'review' | 'cancelled'>(booking.status === 'cancelled' ? 'cancelled' : 'review')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function cancel() {
+    setIsLoading(true)
+    setError('')
+    try {
+      await cancelBooking(token)
+      setStep('cancelled')
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not cancel this appointment.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (step === 'cancelled') return <main className="min-h-screen bg-fixt-paper text-fixt-ink"><header className="border-b border-fixt-line"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-8"><div className="font-serif text-xl tracking-[-0.03em]">{booking.businessName}</div><div className="font-mono text-[10px] uppercase tracking-[0.16em] text-fixt-muted">Appointment support</div></div></header><div className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24"><div className="mb-12 flex size-12 items-center justify-center bg-fixt-amber text-fixt-ink"><Check className="size-6" strokeWidth={1.5} /></div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fixt-amber">Appointment cancelled</p><h1 className="mt-4 max-w-xl text-balance font-serif text-5xl leading-[0.98] tracking-[-0.055em] md:text-7xl">You&apos;re all set.</h1><p className="mt-6 max-w-md text-sm leading-6 text-fixt-muted">{booking.serviceName} on {formatDateLabel(booking.startsAt)} has been cancelled.</p></div></main>
+
+  return <main className="min-h-screen bg-fixt-paper text-fixt-ink"><header className="border-b border-fixt-line"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-8"><div className="font-serif text-xl tracking-[-0.03em]">{booking.businessName}</div><div className="font-mono text-[10px] uppercase tracking-[0.16em] text-fixt-muted">Appointment support</div></div></header><div className="mx-auto max-w-3xl px-5 py-10 md:px-8 md:py-16"><SectionLabel>Review cancellation</SectionLabel><h1 className="max-w-xl text-balance font-serif text-5xl leading-[0.98] tracking-[-0.055em] md:text-7xl">Are you sure you want to cancel?</h1><p className="mt-6 max-w-md text-sm leading-6 text-fixt-muted">This will release your appointment time.</p><div className="mt-12 border-y border-fixt-line py-6"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-fixt-muted">Appointment</p><p className="mt-3 font-serif text-2xl">{booking.serviceName}</p><p className="mt-1 font-mono text-xs text-fixt-muted">{formatDateLabel(booking.startsAt)} · {formatTimeLabel(booking.startsAt)}</p></div>{error && <p role="alert" className="mt-6 border-l-2 border-fixt-amber bg-fixt-wash px-3 py-2 text-sm leading-5">{error}</p>}<div className="mt-10"><button disabled={isLoading} onClick={cancel} className="inline-flex items-center justify-center gap-2 bg-fixt-amber px-5 py-4 font-mono text-[11px] uppercase tracking-[0.14em] text-fixt-ink hover:opacity-85 disabled:cursor-wait disabled:opacity-60">{isLoading ? 'Cancelling…' : 'Yes, cancel appointment'} <ArrowRight className="size-4" strokeWidth={1.5} /></button></div></div></main>
 }
 
 function Header() { return <header className="border-b border-fixt-line"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-8"><div className="font-serif text-xl tracking-[-0.03em]">{business.name}</div><div className="font-mono text-[10px] uppercase tracking-[0.16em] text-fixt-muted">Appointment support</div></div></header> }

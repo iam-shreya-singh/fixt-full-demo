@@ -2,9 +2,10 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import { cancelOwnerBooking, type OwnerBooking } from '@/app/actions/bookings'
+import { markBookingCompleted, markBookingNoShow } from '@/app/actions/dashboard'
 
 type Props = { initialBookings: OwnerBooking[] }
-const statuses = ['all', 'confirmed', 'completed', 'cancelled', 'no-show']
+const statuses = ['all', 'confirmed', 'completed', 'cancelled', 'no_show']
 
 function formatDate(value: string) { return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(value)) }
 function formatTime(value: string) { return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(value)) }

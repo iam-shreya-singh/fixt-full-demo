@@ -17,6 +17,7 @@ export function FixtLandingPage() {
             <a href="#features" className="transition-colors hover:text-fixt-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fixt-amber">Features</a>
             <a href="#faq" className="transition-colors hover:text-fixt-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fixt-amber">FAQ</a>
           </nav>
+          
           <Link href="/onboarding" className="border border-fixt-ink bg-fixt-ink px-4 py-2.5 text-xs font-medium text-fixt-paper transition-colors hover:bg-fixt-amber hover:text-fixt-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fixt-amber">Start with Fixt</Link>
         </div>
       </header>

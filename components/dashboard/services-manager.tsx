@@ -20,7 +20,7 @@ export function ServicesManager({ initialServices }: Props) {
 
   function submit(event: React.FormEvent) {
     event.preventDefault(); setError('')
-    const input = { name: form.name, description: form.description, durationMinutes: form.durationMinutes, priceCents: Math.round(Number(form.price || 0) * 100) }
+    const input = { name: form.name, description: form.description, durationMinutes: Number(form.durationMinutes), priceCents: Math.round(Number(form.price || 0) * 100) }
     startTransition(async () => {
       try {
         if (form.id) await updateService(form.id, input)

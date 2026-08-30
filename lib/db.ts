@@ -28,7 +28,7 @@ export const customers = pgTable('fixt_customers', {
 export const ownerProfiles = pgTable('fixt_owner_profiles', {
   userId: text('user_id').primaryKey(),
   businessName: text('business_name').notNull(),
-  slug: text('slug').notNull(),
+  slug: text('slug').notNull().unique(),   //added .unique() add the constraint at the schema level
   timezone: text('timezone').notNull(),
   onboardingComplete: boolean('onboarding_complete').notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
@@ -48,10 +48,12 @@ export const appointments = pgTable('fixt_appointments', {
   userId: text('user_id').notNull(),
   customerName: text('customer_name').notNull(),
   customerEmail: text('customer_email').notNull(),
+  customerPhone: text('customer_phone'),
   serviceName: text('service_name').notNull(),
   startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
   endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
   status: text('status').notNull(),
+  cancellationToken: text('cancellation_token').notNull().unique(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 

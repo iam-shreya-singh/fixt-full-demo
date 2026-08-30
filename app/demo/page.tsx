@@ -1,5 +1,5 @@
-import { PublicBookingPage } from '@/components/booking/public-booking-page'
+import { redirect } from 'next/navigation'
 
 export default function DemoBookingPage() {
-  return <PublicBookingPage />
+  redirect('/')
 }
