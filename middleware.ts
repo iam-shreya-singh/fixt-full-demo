@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, request) => {
 export const config = {
   matcher: [
     // Bypasses Next.js internals, static assets, and the Clerk proxy path
-    '/((?!_next|__clerk|[^?]*\\.[^?]*$).*)',
+    '/((?!_next|[^?]*\\.[^?]*$).*)',
     // Always monitors API and trpc interaction streams
     '/(api|trpc)(.*)',
   ],
